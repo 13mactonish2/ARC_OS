@@ -1,0 +1,361 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #171717;
+  --primary-foreground: #fafafa;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #171717;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --accent: #f5f5f5;
+  --accent-foreground: #171717;
+  --destructive: #e7000b;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #a1a1a1;
+  --chart-1: #f54900;
+  --chart-2: #009689;
+  --chart-3: #104e64;
+  --chart-4: #ffb900;
+  --chart-5: #fe9a00;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-primary: #171717;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #a1a1a1;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #171717;
+  --card-foreground: #fafafa;
+  --popover: #171717;
+  --popover-foreground: #fafafa;
+  --primary: #e5e5e5;
+  --primary-foreground: #171717;
+  --secondary: #262626;
+  --secondary-foreground: #fafafa;
+  --muted: #262626;
+  --muted-foreground: #a1a1a1;
+  --accent: #262626;
+  --accent-foreground: #fafafa;
+  --destructive: #ff6467;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #737373;
+  --chart-1: #1447e6;
+  --chart-2: #00bc7d;
+  --chart-3: #fe9a00;
+  --chart-4: #ad46ff;
+  --chart-5: #ff2056;
+  --sidebar: #171717;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #1447e6;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #737373;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ============ REDSEC v5.0 OS ============ */
+@keyframes slideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes winOpen {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes ctxIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+@keyframes winClose {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.9) translateY(14px); opacity: 0; }
+}
+@keyframes winMin {
+  from { transform: scale(1) translateY(0); opacity: 1; }
+  to { transform: scale(0.82) translateY(120px); opacity: 0; }
+}
+@keyframes toastIn {
+  from { transform: translateX(110%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes shotPop {
+  0% { transform: translateY(16px) scale(0.94); opacity: 0; }
+  60% { transform: translateY(-2px) scale(1.01); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes lockIn {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(24px); }
+}
+@keyframes lockZoom {
+  from { transform: scale(1.05); }
+  to { transform: scale(1); }
+}
+@keyframes progShrink {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+@keyframes widgetIn {
+  from { transform: translateY(10px) scale(0.97); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes flipCard {
+  0% { transform: rotateX(88deg); opacity: 0.35; filter: brightness(1.35); }
+  60% { transform: rotateX(-14deg); opacity: 1; filter: brightness(1.05); }
+  100% { transform: rotateX(0deg); opacity: 1; filter: brightness(1); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheen {
+  0% { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(240%) skewX(-18deg); }
+}
+@keyframes popIn {
+  from { transform: scale(0.92) translateY(6px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+/* break-time stretch tip carousel fade */
+@keyframes tipIn {
+  from { transform: translateY(4px); opacity: 0; filter: blur(2px); }
+  to { transform: translateY(0); opacity: 1; filter: blur(0); }
+}
+/* aero-shake wobble (WindowFrame adds it when a shake is detected) */
+@keyframes shakeW {
+  0% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-7px) rotate(-0.35deg); }
+  40% { transform: translateX(6px) rotate(0.3deg); }
+  60% { transform: translateX(-4px) rotate(-0.2deg); }
+  80% { transform: translateX(3px) rotate(0.15deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+/* virtual desktop switch transition */
+@keyframes deskIn {
+  from { transform: translateY(14px) scale(0.985); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes taskViewIn {
+  from { transform: scale(1.04); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+#os-root.desk-switching [data-win-frame] { animation: deskIn 0.22s ease; }
+#os-root.desk-switching [data-desktop-surface] { animation: deskIn 0.26s ease; }
+
+.os-scroll::-webkit-scrollbar { width: 9px; height: 9px; }
+.os-scroll::-webkit-scrollbar-track { background: transparent; }
+.os-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+.os-scroll::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); background-clip: content-box; border: 2px solid transparent; }
+.os-scroll-nobar::-webkit-scrollbar { height: 0; width: 0; }
+
+.os-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, #34d399, #14b8a6);
+  outline: none;
+}
+.os-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  cursor: pointer;
+}
+.os-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 9999px;
+  background: #fff;
+  cursor: pointer;
+}
+
+input, textarea, select { caret-color: #34d399; }
+
+/* ============================================================
+   REDSEC VXR-5 GPU Boost — html[data-gpu-boost="on"]
+   Disables expensive backdrop filters, promotes windows,
+   animations and media to dedicated GPU compositing layers.
+   ============================================================ */
+html[data-gpu-boost="on"] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html[data-gpu-boost="on"] .os-win,
+html[data-gpu-boost="on"] .os-window {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+html[data-gpu-boost="on"] video,
+html[data-gpu-boost="on"] canvas,
+html[data-gpu-boost="on"] img {
+  transform: translateZ(0);
+  will-change: transform;
+}
+html[data-gpu-boost="on"] .animate-ping,
+html[data-gpu-boost="on"] .animate-pulse,
+html[data-gpu-boost="on"] .animate-spin {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+html[data-gpu-boost="on"] .os-scroll {
+  overflow-y: auto;
+  transform: translateZ(0);
+}
+html[data-gpu-boost="on"] ::-webkit-scrollbar-thumb {
+  box-shadow: none;
+}
+
+/* ============================================================
+   Game Mode — html[data-game-mode="on"]
+   Trimmed shadows + faster transitions for max frame pacing.
+   ============================================================ */
+html[data-game-mode="on"] .os-win,
+html[data-game-mode="on"] .os-window {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  transition-duration: 80ms !important;
+}
+
+/* ============================================================
+   Task 16/18 — RedSec Mobile OS VM animations
+   ============================================================ */
+@keyframes bbAppIn {
+  from { transform: scale(0.92); opacity: 0.4; }
+  to   { transform: scale(1); opacity: 1; }
+}
+@keyframes bbHubIn {
+  from { transform: translateX(-14%); opacity: 0.6; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes bbQsIn {
+  from { transform: translateY(-110%); }
+  to   { transform: translateY(0); }
+}
+@keyframes bbFrameGlow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); }
+  50%      { box-shadow: 0 0 14px 2px rgba(228, 0, 43, 0.35); }
+}
+
+/* ============================================================
+   Task 19 — Realtime light theme (os-light)
+   The shell is built dark-first with hundreds of hardcoded
+   slate/[#...] classes, so light mode applies a smart inverted
+   skin: invert(1) + hue-rotate(180deg) turns the dark UI into a
+   readable light one in real time (no reload), while true-color
+   media (wallpapers, skin images, videos, iframes, canvas) is
+   re-inverted back via .os-uninvert / element filters so photos,
+   GIF live wallpapers and web apps keep their real colors.
+   ============================================================ */
+.os-light {
+  filter: invert(1) hue-rotate(180deg);
+  background: #e8eaf0;
+}
+.os-light .os-uninvert,
+.os-light img,
+.os-light video,
+.os-light iframe,
+.os-light canvas,
+.os-light svg image {
+  filter: invert(1) hue-rotate(180deg);
+}
+/* keep native color inputs & selects feeling native */
+.os-light input[type="color"] {
+  filter: none;
+}
+
+/* REDSEC anti-lag adaptive performance mode — set by the anti-lag daemon
+   (src/lib/os/security/anti-lag.ts) when the real frame rate stays under
+   24 fps; animations, transitions and backdrop blurs are stripped OS-wide
+   until the frame rate recovers. */
+html[data-perf='low'] *,
+html[data-perf='low'] *::before,
+html[data-perf='low'] *::after {
+  animation-duration: 0.001s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001s !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
