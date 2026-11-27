@@ -25,6 +25,10 @@ REDSEC is a browser-based desktop operating system: a full Debian-style desktop 
 - `mini-services` — independent socket.io services
 - `public` — static assets (ffmpeg.wasm runtime, media, DOS box)
 
+## What is committed on main vs. the snapshot
+
+`main` carries the complete backend (every `src/app/api` REST route), all project configuration, the Prisma schema, the deploy/QA tooling, mini-services, examples and core server libraries. The desktop shell and 40+ OS apps (`src/components/`), the remaining OS core libraries (`src/lib/os/`) and the skill bundles ship inside the downloadable snapshot below — [`FILE-MANIFEST.md`](./FILE-MANIFEST.md) lists ALL 547 source files with exact sizes. Extract the zip anywhere and run `bun install && bun run db:push && bun run dev` for the full OS.
+
 ## Run locally
 
 ```
