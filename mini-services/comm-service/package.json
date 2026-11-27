@@ -1,0 +1,12 @@
+{
+  "name": "comm-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "REDSEC 5.0 comm service — WebRTC signaling for Video Call + realtime relay for Chat (port 3005)",
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.1"
+  }
+}
