@@ -1,0 +1,268 @@
+// REDSEC 5.0 — Prisma schema
+// InterCore stack: media files, chat, mail, archive, call sessions
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/* ---------- InterCore media vault ---------- */
+// every uploaded file (chat attachments, mail attachments, call snapshots)
+// is stored on disk under /uploads and registered here
+model MediaFile {
+  id        String   @id @default(cuid())
+  name      String
+  mime      String
+  size      Int
+  path      String // filename on disk inside the uploads dir
+  source    String   @default("upload") // chat | mail | call | manual
+  createdAt DateTime @default(now())
+}
+
+/* ---------- secure chat ---------- */
+model ChatRoom {
+  id        String   @id @default(cuid())
+  code      String   @unique // 6-digit entry code
+  name      String
+  ownerName String   @default("Host")
+  createdAt DateTime @default(now())
+  lastAt    DateTime @default(now())
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id         String   @id @default(cuid())
+  roomId     String
+  room       ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  senderName String
+  kind       String   @default("text") // text | image | video | file | audio
+  text       String   @default("")
+  fileId     String? // MediaFile id when kind != text
+  createdAt  DateTime @default(now())
+}
+
+/* ---------- file workspaces (NeoChat Workspaces — files-only rooms) ---------- */
+model WorkSpace {
+  id        String     @id @default(cuid())
+  code      String     @unique // 6-digit entry code (same environment as chat)
+  name      String
+  ownerName String     @default("Host")
+  createdAt DateTime   @default(now())
+  lastAt    DateTime   @default(now())
+  files     WorkFile[]
+}
+
+model WorkFile {
+  id         String    @id @default(cuid())
+  spaceId    String
+  space      WorkSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  senderName String
+  fileId     String? // MediaFile id in the InterCore vault
+  name       String
+  mime       String    @default("application/octet-stream")
+  size       Int       @default(0)
+  kind       String    @default("file") // file | image | video | audio
+  createdAt  DateTime  @default(now())
+}
+
+/* ---------- secure mail ---------- */
+model MailAccount {
+  id          String   @id @default(cuid())
+  provider    String // google | apple | microsoft | yahoo
+  address     String   @unique
+  displayName String
+  token       String   @default("") // session token handed to the client
+  createdAt   DateTime @default(now())
+  messages    MailMessage[]
+}
+
+model MailMessage {
+  id         String      @id @default(cuid())
+  accountId  String
+  account    MailAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  folder     String      @default("inbox") // inbox | sent | archive | drafts | trash
+  fromAddr   String
+  fromName   String
+  toAddr     String
+  subject    String      @default("")
+  body       String      @default("")
+  secure     Boolean     @default(true)
+  starred    Boolean     @default(false)
+  read       Boolean     @default(false)
+  attachments String     @default("[]") // JSON: [{id,name,mime,size}]
+  date       DateTime    @default(now())
+}
+
+/* ---------- archive (InterCore) ---------- */
+// one row per archivable thing: a chat file, a mail attachment, a call
+// snapshot photo, or an archived email body
+model ArchiveItem {
+  id        String   @id @default(cuid())
+  kind      String // image | video | audio | file | email
+  name      String
+  mime      String   @default("application/octet-stream")
+  size      Int      @default(0)
+  source    String // chat | call | mail
+  fileId    String? // MediaFile id (null for emails)
+  refId     String? // chat message id / mail message id
+  meta      String   @default("{}") // JSON extras (room code, from/to…)
+  createdAt DateTime @default(now())
+}
+
+/* ---------- video call sessions ---------- */
+model CallSession {
+  id        String   @id @default(cuid())
+  code      String   @unique // 6-digit room code
+  hostName  String   @default("Host")
+  startedAt DateTime @default(now())
+  endedAt   DateTime?
+  peakPeers Int      @default(0)
+}
+
+/* ---------- Owner fleet: OS distribution tracking (Task 18) ---------- */
+model OwnerConfig {
+  id            String    @id @default("owner")
+  ownerUsername String
+  ownerToken    String    @unique
+  /* Task 56 — Developer Options fleet grant: a scoped read token the server
+     issues while a device holds a verified Developer Options handshake. It
+     opens the SAME Owner Console (fleet view + push) but every action is
+     logged as "via Developer Options" in the server security log. */
+  devToken      String    @unique @default("")
+  devTokenAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model DeviceSession {
+  id        String   @id @default(cuid())
+  username  String
+  browser   String
+  osName    String
+  device    String
+  screen    String
+  lastSeen  DateTime @default(now())
+  firstSeen DateTime @default(now())
+  pings     Int      @default(1)
+  @@unique([username, browser, device])
+}
+
+/* ---------- REDSEC v7.0 "Black Sea" — permanent device ban registry ----------
+   One row per banned device. Bans are FOREVER: no expiry field on purpose.
+   Every OS boot handshakes with the registry — a banned device is blocked
+   in realtime, in every browser, on every session. */
+model BannedDevice {
+  id        String   @id @default(cuid())
+  deviceId  String   @unique // client hardware fingerprint (stable across browsers)
+  reason    String // os_password_breach | os_file_tamper | kernel_breach | manual
+  detail    String   @default("")
+  browser   String   @default("")
+  ua        String   @default("")
+  banId     String // human-readable ban id, e.g. BS-BAN-XXXXXX
+  bannedAt  DateTime @default(now())
+  lastSeen  DateTime @default(now()) // last time the banned device tried to boot
+  attempts  Int      @default(1) // how many times it tried to come back
+}
+
+/* ---------- Black Sea — security incident feed (realtime breach trail) ---------- */
+model SecurityIncident {
+  id       String   @id @default(cuid())
+  deviceId String
+  kind     String // tamper_warning | os_password_breach | os_file_tamper | kernel_breach | handshake | unlock
+  detail   String   @default("")
+  browser  String   @default("")
+  at       DateTime @default(now())
+}
+
+/* ---------- Black Sea — trusted browser allowlist (compatibility gate) ----------
+   The first browser that completes OS setup becomes the trusted one. Any other
+   browser brand (Firefox, Safari, Edge…) is shown the DEVICE NOT COMPATIBLE
+   gate. Developer Options may add the current browser to this list. */
+model TrustedBrowser {
+  id       String   @id @default(cuid())
+  brand    String   @unique // 'Google Chrome' | 'Mozilla Firefox' | …
+  addedBy  String   @default("setup") // setup | developer
+  addedAt  DateTime @default(now())
+}
+
+/* ---------- Text ER — Discord web pages (saved forever) ----------
+   One row per Discord web page the user enters from the Text ER "Web page"
+   mode. The list lives on the InterCore server, so it survives OS restarts,
+   browser data wipes and follows the user across devices. */
+model DiscordWebPage {
+  id       String   @id @default(cuid())
+  ownerKey String // OS username scope
+  name     String
+  url      String
+  kind     String   @default("page") // home | invite | channel | widget | page
+  guildId  String   @default("")
+  addedAt  DateTime @default(now())
+  lastAt   DateTime @default(now())
+  @@unique([ownerKey, url])
+  @@index([ownerKey])
+}
+
+/* ---------- Task 42: office share links (Word / PowerPoint / Excel) ---------- */
+// one row per shared document — the real office file (.docx/.pptx/.xlsx) is
+// stored base64-encoded so a plain link opens it on any REDSEC OS device
+model SharedDoc {
+  id        String   @id // short share id used in the public link
+  app       String // word | presentation | sheet
+  name      String
+  data      String // base64 payload of the real office file
+  size      Int      @default(0)
+  opens     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+/* ---------- Extension upgrade: user-uploaded extension links ----------
+   One row per uploaded link. Stored server-side so the links are
+   DISTRIBUTED TO EVERY OS USER and survive a FACTORY RESET forever
+   (factory reset only wipes localStorage + the virtual FS — the DB
+   is never touched). browser: chrome | firefox | edge | all */
+model ExtLink {
+  id        String   @id @default(cuid())
+  browser   String   @default("all") // chrome | firefox | edge | all
+  name      String
+  url       String
+  desc      String   @default("Added by an OS user — saved forever.")
+  color     String   @default("#a855f7")
+  createdAt DateTime @default(now())
+}
+
+/* ---------- Mirror TV — user-uploaded entertainment links (saved forever) ----------
+   One row per uploaded entertainment option. Lives in the InterCore server DB
+   so links are DISTRIBUTED TO EVERY OS DEVICE and survive a FACTORY RESET
+   forever (factory reset only wipes localStorage + the virtual FS — the DB
+   is never touched).
+   kind: site (iframe page) | video (direct mp4/webm/m3u8 stream) | audio (mp3/m4a radio) */
+model MirrorLink {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  category  String   @default("movies") // movies | series | live | sports | music | anime | cartoon | video | other
+  kind      String   @default("site") // site | video | audio
+  desc      String   @default("")
+  createdAt DateTime @default(now())
+}
