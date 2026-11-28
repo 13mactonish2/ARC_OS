@@ -4,7 +4,7 @@
 ROOT_DIR="/home/z/my-project/mini-services"
 
 main() {
-    echo "🚀 开始批量安装..."
+    echo "🚀 开始批量安装依赖..."
     
     # 检查 rootdir 是否存在
     if [ ! -d "$ROOT_DIR" ]; then
