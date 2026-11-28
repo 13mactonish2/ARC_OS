@@ -128,7 +128,7 @@ export const PREMIUM_BASEMAPS: BaseMapDef[] = [
   },
   {
     id: 'mapbox-satellite', label: 'Mapbox Satellite+', group: 'imagery', needsKey: 'mapbox',
-    url: 'https://api.mapbox.com/styles/v1/mapbox/satellite-v12/tiles/{z}/{x}/{y}?access_token={key}',
+    url: 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/{z}/{x}/{y}?access_token={key}',
     attribution: '© Mapbox © OpenStreetMap', maxZoom: 20,
   },
   {
