@@ -59,9 +59,7 @@ install_requirements() {
             [ -f "$script" ] || continue
             perl -0pi -e 's/\A#![^
 ]*python[^
-]*
-/#!\/usr\/bin\/env python
-/' "$script"
+]*\n/#!\/usr\/bin\/env python\n/' "$script"
         done
     fi
 }
