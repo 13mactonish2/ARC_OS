@@ -8,6 +8,18 @@ REDSEC is a **browser-based desktop operating system**: a full Debian-style desk
 
 ---
 
+## What's new
+
+Every update to the OS is documented here, grouped by area — **apps · UI · OS core · security**.
+
+### Audio Fly v2 — music app refresh (latest)
+- **Apps** — the music app header no longer shows "Audio Fly — Metro home" or the "14 tracks · unlimited — scroll for more" count line. The home header is now a clean time-based greeting (Good morning / Good afternoon / Good evening / Late night listening), and the Liked tab simply shows its song count.
+- **UI** — premium streaming-app look across the music app: deep charcoal surfaces, signature green accents, circular green play buttons, green seek bar, green liked hearts and a dark now-playing bar.
+- **Apps / logic** — streaming-style autoplay: when the queue reaches its end, the radio chain automatically appends a fresh page of similar tracks and keeps playing, so the music never stops.
+- **Unchanged on purpose** — the Windows-Phone-8 METRO tile home is exactly the same, and the YouTube Music-powered backend (real-time search, full-length songs, official artist verification, live view/like counts) is untouched. No third-party music branding appears anywhere in the app.
+
+---
+
 ## Features
 
 ### Desktop shell
