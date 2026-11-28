@@ -29,7 +29,7 @@ export async function blobToB64(blob: Blob): Promise<string> {
 export function b64ToBlob(b64: string, mime: string): Blob {
   const bin = atob(b64)
   const buf = new Uint8Array(bin.length)
-  for (let i = 0; i < buf.length; i++) buf[i] = bin.charCodeAt(i)
+  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i)
   return new Blob([buf], { type: mime })
 }
 
